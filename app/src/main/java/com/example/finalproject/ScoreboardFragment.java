@@ -47,7 +47,7 @@ public class ScoreboardFragment extends Fragment {
     private Button playAgainButton = null;
     private EditText usernameInput = null;
 
-    private String serverAddress = "http://134.209.78.68/api/scores";
+    private String serverAddress = "http://68.183.119.17:8001/flapperBird/api/scores";
 
     private final String[] SCORE_LIST_ITEM_FROM = {"position", "name", "score"};
     private final int[] SCORE_LIST_ITEM_TO = {R.id.article_item_position, R.id.article_item_title, R.id.article_item_author};
