@@ -16,4 +16,19 @@
         <item name="windowActionBar">false</item>
     </style>
 
+
+    <style name="scoreboard_button" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="scoreboard_item" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>
