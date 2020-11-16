@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">FinalProject</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="top_score">Top 100 Scores</string>
+    <string name="user_score_title">Your Score:</string>
+    <string name="user_score">NULL</string>
+    <string name="upload_score">Upload Score</string>
+    <string name="share_score">Share Score</string>
+    <string name="home_screen">Home</string>
+    <string name="play_again">Play Again</string>
+    <string name="enter_username">Username:</string>
 </resources>
