@@ -1,6 +1,7 @@
 package com.example.finalproject;
 
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -116,10 +117,9 @@ public class ScoreboardFragment extends Fragment {
         playAgainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Create fragment
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.main_layout_container, new PlayGameFragment()).addToBackStack("Fragment");
-                ft.commit();
+                // start a game intent
+                Intent intent = new Intent(getActivity(), PlayGameActivity.class);
+                startActivity(intent);
             }
         });
 
