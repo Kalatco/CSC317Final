@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -28,14 +29,9 @@ public class MainMenuFragment extends Fragment {
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start new fragment
-                PlayGameFragment playFrag = new PlayGameFragment();
-                Bundle args = new Bundle();
-                playFrag.setArguments(args);
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(((ViewGroup) getView().getParent()).getId() , playFrag);
-                ft.addToBackStack(null);
-                ft.commit();
+                // start PlayGameActivity
+                Intent intent = new Intent(getActivity(), PlayGameActivity.class);
+                startActivity(intent);
             }
         });
 
