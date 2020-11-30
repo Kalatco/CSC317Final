@@ -1,6 +1,8 @@
 package com.example.finalproject;
 
+import android.app.Activity;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -11,6 +13,16 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 import android.view.WindowManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PlayGameActivity extends AppCompatActivity {
 
@@ -29,6 +41,10 @@ public class PlayGameActivity extends AppCompatActivity {
         // initialize gameView object
         gameView = new GameView(this, point.x, point.y);
 
+
+        // Check for game over in gameView object
+        new AsyncCheckGameOver().execute();
+
         setContentView(gameView);
     }
 
@@ -42,6 +58,27 @@ public class PlayGameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         gameView.resume();
+    }
+
+
+
+    private class AsyncCheckGameOver extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            while(!gameView.checkIfGameOver()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("Game Over! now do something from PlayGameActivity");
+
+            return null;
+        }
     }
 
 }

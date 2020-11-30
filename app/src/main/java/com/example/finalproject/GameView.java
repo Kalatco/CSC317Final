@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements  Runnable {
 
+    private boolean isGameOver = false;
     private Thread thread;
     private boolean isPlaying;
     private Background background1, background2;
@@ -34,9 +35,6 @@ public class GameView extends SurfaceView implements  Runnable {
         this.background2 = new Background(screenSizeX, screenSizeY, getResources());
 
         background2.screenSizeX = screenSizeX;
-
-
-
     }
 
     @Override
@@ -61,11 +59,11 @@ public class GameView extends SurfaceView implements  Runnable {
             background2.screenSizeX = screenX;
         }
 
-        if(bird.isGoingUp){
-            // make bird go up
-            bird.y -= 15;
+        // If bird fell off the bottom of the page, pause.
+        if (bird.y > 950) {
+            isGameOver = true;
+            pause();
         }
-
     }
 
     // draw() will create and display the canvas for the game view
@@ -112,12 +110,13 @@ public class GameView extends SurfaceView implements  Runnable {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                bird.isGoingUp = true;
-                break;
-        }
+        // Move bird up page
+        bird.y -= 100;
 
         return true;
+    }
+
+    public boolean checkIfGameOver() {
+        return isGameOver;
     }
 }
