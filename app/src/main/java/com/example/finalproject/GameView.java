@@ -3,14 +3,17 @@ package com.example.finalproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements  Runnable {
 
+    private boolean isGameOver = false;
     private Thread thread;
     private boolean isPlaying;
     private Background background1, background2;
@@ -18,10 +21,17 @@ public class GameView extends SurfaceView implements  Runnable {
     private int screenX, screenY;
     private Paint paint;
     private Bird bird;
+    private Pipe pipe;
+
+    private Score score;
 
     public GameView(Context context, int screenSizeX, int screenSizeY) {
         super(context);
         this.paint = new Paint();
+        this.paint.setAntiAlias(true);
+        this.paint.setFilterBitmap(true);
+        this.paint.setDither(true);
+        
         this.screenX = screenSizeX;
         this.screenY = screenSizeY;
 
@@ -29,14 +39,14 @@ public class GameView extends SurfaceView implements  Runnable {
 //        this.screenRatioY = 1080f / screenY;
 
         this.bird = new Bird(screenY, getResources());
+        this.pipe = new Pipe(getResources());
+
+        this.score = new Score();
 
         this.background1 = new Background(screenSizeX, screenSizeY, getResources());
         this.background2 = new Background(screenSizeX, screenSizeY, getResources());
 
         background2.screenSizeX = screenSizeX;
-
-
-
     }
 
     @Override
@@ -61,11 +71,11 @@ public class GameView extends SurfaceView implements  Runnable {
             background2.screenSizeX = screenX;
         }
 
-        if(bird.isGoingUp){
-            // make bird go up
-            bird.y -= 15;
+        // If bird fell off the bottom of the page, pause.
+        if (bird.y > 950) {
+            isGameOver = true;
+            pause();
         }
-
     }
 
     // draw() will create and display the canvas for the game view
@@ -79,6 +89,16 @@ public class GameView extends SurfaceView implements  Runnable {
 
             canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
 
+            canvas.drawBitmap(pipe.getPipe(), pipe.x, pipe.y, paint);
+
+            if(pipe.isInvalidPass(bird.x, bird.y)) {
+                isGameOver = true;
+                pause();
+            }
+
+            if(pipe.isValidPass(bird.x, bird.y)) {
+                this.score.increaseScore();
+            }
 
             getHolder().unlockCanvasAndPost(canvas); // this shows the canvas
         }
@@ -112,12 +132,16 @@ public class GameView extends SurfaceView implements  Runnable {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                bird.isGoingUp = true;
-                break;
-        }
+        // Move bird up page
+        bird.y -= 100;
 
         return true;
     }
+
+    public boolean checkIfGameOver() {
+        return isGameOver;
+    }
+
+
+    public int getGameOverScore() { return this.score.getCurrentScore(); }
 }
