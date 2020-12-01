@@ -76,6 +76,7 @@ public class PlayGameActivity extends AppCompatActivity {
             }
 
             System.out.println("Game Over! now do something from PlayGameActivity");
+            System.out.println("User score is: " + gameView.getGameOverScore());
 
             return null;
         }

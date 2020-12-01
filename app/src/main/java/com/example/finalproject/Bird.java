@@ -36,6 +36,7 @@ public class Bird {
         }
         // this make bird go down
         y+= 15;
+        //System.out.println("bird update Y: " + y);
         return bird1;
     }
 

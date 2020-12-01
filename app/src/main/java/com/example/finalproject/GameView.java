@@ -3,8 +3,10 @@ package com.example.finalproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -19,10 +21,17 @@ public class GameView extends SurfaceView implements  Runnable {
     private int screenX, screenY;
     private Paint paint;
     private Bird bird;
+    private Pipe pipe;
+
+    private Score score;
 
     public GameView(Context context, int screenSizeX, int screenSizeY) {
         super(context);
         this.paint = new Paint();
+        this.paint.setAntiAlias(true);
+        this.paint.setFilterBitmap(true);
+        this.paint.setDither(true);
+        
         this.screenX = screenSizeX;
         this.screenY = screenSizeY;
 
@@ -30,6 +39,9 @@ public class GameView extends SurfaceView implements  Runnable {
 //        this.screenRatioY = 1080f / screenY;
 
         this.bird = new Bird(screenY, getResources());
+        this.pipe = new Pipe(getResources());
+
+        this.score = new Score();
 
         this.background1 = new Background(screenSizeX, screenSizeY, getResources());
         this.background2 = new Background(screenSizeX, screenSizeY, getResources());
@@ -77,6 +89,16 @@ public class GameView extends SurfaceView implements  Runnable {
 
             canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
 
+            canvas.drawBitmap(pipe.getPipe(), pipe.x, pipe.y, paint);
+
+            if(pipe.isInvalidPass(bird.x, bird.y)) {
+                isGameOver = true;
+                pause();
+            }
+
+            if(pipe.isValidPass(bird.x, bird.y)) {
+                this.score.increaseScore();
+            }
 
             getHolder().unlockCanvasAndPost(canvas); // this shows the canvas
         }
@@ -119,4 +141,7 @@ public class GameView extends SurfaceView implements  Runnable {
     public boolean checkIfGameOver() {
         return isGameOver;
     }
+
+
+    public int getGameOverScore() { return this.score.getCurrentScore(); }
 }
