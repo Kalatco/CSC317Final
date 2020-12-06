@@ -60,8 +60,6 @@ public class PlayGameActivity extends AppCompatActivity {
         gameView.resume();
     }
 
-
-
     private class AsyncCheckGameOver extends AsyncTask<String, String, String> {
 
         @Override

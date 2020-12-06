@@ -21,7 +21,7 @@ public class GameView extends SurfaceView implements  Runnable {
     private int screenX, screenY;
     private Paint paint;
     private Bird bird;
-    private Pipe pipe;
+    private PipeLayer pipes;
 
     private Score score;
 
@@ -39,7 +39,8 @@ public class GameView extends SurfaceView implements  Runnable {
 //        this.screenRatioY = 1080f / screenY;
 
         this.bird = new Bird(screenY, getResources());
-        this.pipe = new Pipe(getResources());
+
+        this.pipes = new PipeLayer(getResources(), screenY);
 
         this.score = new Score();
 
@@ -88,21 +89,48 @@ public class GameView extends SurfaceView implements  Runnable {
             canvas.drawBitmap(background2.background, background2.screenSizeX, background2.screenSizeY, paint);
 
             canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
+            canvas.drawBitmap(pipes.getTopPipe(), pipes.topPipe.x, pipes.topPipe.y, paint);
+            canvas.drawBitmap(pipes.getBottomPipe(), pipes.bottomPipe.x, pipes.bottomPipe.y, paint);
+            getHolder().unlockCanvasAndPost(canvas); // this shows the canvas
 
-            canvas.drawBitmap(pipe.getPipe(), pipe.x, pipe.y, paint);
-
-            if(pipe.isInvalidPass(bird.x, bird.y)) {
+//            if(pipes.isInvalidPass(bird.x, bird.y)) {
+//                isGameOver = true;
+//                pause();
+//            }
+//
+//            if(pipe.isValidPass(bird.x, bird.y)) {
+//                this.score.increaseScore();
+//            }
+            //check to see if collision happen
+            if(doOverlap(bird, pipes.topPipe)){
+                isGameOver = true;
+                pause();
+            }
+            if(doOverlap(bird, pipes.bottomPipe)){
                 isGameOver = true;
                 pause();
             }
 
-            if(pipe.isValidPass(bird.x, bird.y)) {
-                this.score.increaseScore();
-            }
-
-            getHolder().unlockCanvasAndPost(canvas); // this shows the canvas
         }
 
+    }
+
+    // Returns true if two rectangles (bird and pipe) (l1, r1) and (l2, r2) overlap
+    static boolean doOverlap(Bird bird, Pipe pipe) {
+        // If one rectangle is on left side of other
+        int offset = 15;
+        int pipeX2 = 150 + pipe.x;
+        int pipeY2 = 1600 + pipe.y;
+        int birdX2 = bird.x + bird.width -offset;
+        int birdY2 = bird.y + bird.height - offset; // -10 for buffer
+
+        if((bird.x -offset) >= pipeX2 || birdX2 <= pipe.x ){
+            return false;
+        }
+        if((bird.y+offset) >= pipeY2 || birdY2 <= pipe.y){
+            return false;
+        }
+        return true;
     }
 
     public void sleep() {
@@ -133,7 +161,8 @@ public class GameView extends SurfaceView implements  Runnable {
     public boolean onTouchEvent(MotionEvent event) {
 
         // Move bird up page
-        bird.y -= 100;
+        bird.isGoingUp = true;
+        bird.y -= 75;
 
         return true;
     }
