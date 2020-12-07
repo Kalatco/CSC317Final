@@ -40,15 +40,4 @@ public class Pipe {
     public void setX(int x) {
         this.x = x;
     }
-
-
-
-
-//
-//    public boolean isValidPass(int birdX, int birdY) {
-//        if (birdX == this.x) {
-//            return birdY > this.chosenOpening-OPENING_DEVIATION && birdY < this.chosenOpening+OPENING_DEVIATION;
-//        }
-//        return false;
-//    }
 }

@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 import java.util.Random;
 
-public class PipeLayer {
+public class  PipeLayer {
 
     public Pipe topPipe, bottomPipe;
     public int y, screenY;
@@ -60,5 +60,7 @@ public class PipeLayer {
         return false;
     }
 
-
+    public boolean isValidPass(int birdX) {
+        return birdX == (bottomPipe.x-5);
+    }
 }

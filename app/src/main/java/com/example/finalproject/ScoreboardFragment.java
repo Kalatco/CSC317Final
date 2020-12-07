@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ScoreboardFragment extends Fragment {
 
+    private TextView previousScoreView = null;
     private ListView topScoreView = null;
     private TextView userScoreView = null;
     private Button uploadScoreButton = null;
@@ -56,6 +57,9 @@ public class ScoreboardFragment extends Fragment {
     private String userScore = "0";
     private String usernameStr = "unknown";
 
+    ScoreDatabase myDB;
+    private String previousScore = "";
+
     public ScoreboardFragment() { }
 
     @Override
@@ -64,6 +68,7 @@ public class ScoreboardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_scoreboard, container, false);
 
         // Set views
+        previousScoreView = (TextView) rootView.findViewById(R.id.previous_score);
         topScoreView = (ListView) rootView.findViewById(R.id.top_score_list);
         userScoreView = (TextView) rootView.findViewById(R.id.user_score);
         uploadScoreButton = (Button) rootView.findViewById(R.id.upload_score);
@@ -72,11 +77,16 @@ public class ScoreboardFragment extends Fragment {
         playAgainButton = (Button) rootView.findViewById(R.id.play_again);
         usernameInput = (EditText) rootView.findViewById(R.id.username_input);
 
-        // Accept user score from PlayGameFragment
-        //userScore = getArguments().getString("SCORE");
-        userScore = "0";
-        userScoreView.setText(userScore);
+        // Open database
+        myDB = new ScoreDatabase(getContext());
 
+        // Get previous score from game
+        previousScoreView.setText(getResources().getString(R.string.previous_score_title) + " " + myDB.getPreviousScore());
+
+        // Accept user score from PlayGameFragment
+        Bundle args = getArguments();
+        userScore = args.getString("score");
+        userScoreView.setText(userScore);
 
         // Set button functionality
         uploadScoreButton.setOnClickListener(new View.OnClickListener() {
@@ -84,11 +94,11 @@ public class ScoreboardFragment extends Fragment {
             public void onClick(View view) {
                 System.out.println("UPLOAD SCORE");
                 // Upload score to server
-                if (userScore.equals("0")) return;
+                if (userScore == null || userScore.equals("0")) return;
                 try {
                     String s = new AsyncUploadScore().execute().get();
                     // Get top scores from our scores API when AsyncUploadScore is finished
-                    new AsyncStopScoresFetcher().execute();
+                    new AsyncTopScoresFetcher().execute();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -100,7 +110,12 @@ public class ScoreboardFragment extends Fragment {
         shareScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("SHARE SCORE");
+                if (userScore == null || userScore.equals("0")) return;
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setType("text/plain");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Flapper Bird Score!");
+                emailIntent.putExtra(Intent.EXTRA_TEXT   , "I got a score of " + userScore + " in flapper bird!");
+                startActivity(emailIntent);
             }
         });
 
@@ -119,18 +134,22 @@ public class ScoreboardFragment extends Fragment {
             public void onClick(View view) {
                 // start a game intent
                 Intent intent = new Intent(getActivity(), PlayGameActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 
 
         // Get top scores from our scores API
-        new AsyncStopScoresFetcher().execute();
+        new AsyncTopScoresFetcher().execute();
+
+        // If new score, add to database
+        new AsyncSaveScore(userScore).execute();
 
         return rootView;
     }
 
-    private class AsyncStopScoresFetcher extends AsyncTask<String, String, String> {
+    // grabs top scores from API
+    private class AsyncTopScoresFetcher extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -210,7 +229,7 @@ public class ScoreboardFragment extends Fragment {
         }
     }
 
-
+    // upload score to API
     private class AsyncUploadScore extends AsyncTask<String, String, String> {
 
         @Override
@@ -246,6 +265,37 @@ public class ScoreboardFragment extends Fragment {
 
                 conn.disconnect();
             } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+    }
+
+    // Add score to database
+    private class AsyncSaveScore extends AsyncTask<String, String, String> {
+
+        private String userScore = "";
+
+        public AsyncSaveScore(String score) {
+            super();
+            this.userScore = score;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            // If new score, add to database
+            try {
+                // Sleep to avoid overlap with database get request
+                Thread.sleep(3000);
+
+                // If score is not 0, add to database
+                if (this.userScore != null && !this.userScore.equals("0")) {
+                    myDB.addScore(this.userScore);
+                }
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 

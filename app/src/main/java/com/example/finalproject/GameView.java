@@ -11,11 +11,10 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
-public class GameView extends SurfaceView implements  Runnable {
+public class GameView extends SurfaceView implements Runnable {
 
-    private boolean isGameOver = false;
     private Thread thread;
-    private boolean isPlaying;
+    private boolean isPlaying = true;
     private Background background1, background2;
     //public static float screenRatioX, screenRatioY;
     private int screenX, screenY;
@@ -74,7 +73,7 @@ public class GameView extends SurfaceView implements  Runnable {
 
         // If bird fell off the bottom of the page, pause.
         if (bird.y > 950) {
-            isGameOver = true;
+            isPlaying = false;
             pause();
         }
     }
@@ -93,30 +92,20 @@ public class GameView extends SurfaceView implements  Runnable {
             canvas.drawBitmap(pipes.getBottomPipe(), pipes.bottomPipe.x, pipes.bottomPipe.y, paint);
             getHolder().unlockCanvasAndPost(canvas); // this shows the canvas
 
-//            if(pipes.isInvalidPass(bird.x, bird.y)) {
-//                isGameOver = true;
-//                pause();
-//            }
-//
-//            if(pipe.isValidPass(bird.x, bird.y)) {
-//                this.score.increaseScore();
-//            }
             //check to see if collision happen
-            if(doOverlap(bird, pipes.topPipe)){
-                isGameOver = true;
-                pause();
-            }
-            if(doOverlap(bird, pipes.bottomPipe)){
-                isGameOver = true;
+            if(doOverlap(bird, pipes.topPipe) || doOverlap(bird, pipes.bottomPipe)){
+                isPlaying = false;
                 pause();
             }
 
+            if (pipes.isValidPass(bird.x)) {
+                this.score.increaseScore();
+            }
         }
-
     }
 
     // Returns true if two rectangles (bird and pipe) (l1, r1) and (l2, r2) overlap
-    static boolean doOverlap(Bird bird, Pipe pipe) {
+    private static boolean doOverlap(Bird bird, Pipe pipe) {
         // If one rectangle is on left side of other
         int offset = 15;
         int pipeX2 = 150 + pipe.x;
@@ -149,10 +138,11 @@ public class GameView extends SurfaceView implements  Runnable {
     }
 
     public void pause() {
+
         try {
             isPlaying = false;
-            thread.join();
-        } catch (InterruptedException e) {
+            thread.interrupt();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -168,9 +158,8 @@ public class GameView extends SurfaceView implements  Runnable {
     }
 
     public boolean checkIfGameOver() {
-        return isGameOver;
+        return !isPlaying;
     }
-
 
     public int getGameOverScore() { return this.score.getCurrentScore(); }
 }

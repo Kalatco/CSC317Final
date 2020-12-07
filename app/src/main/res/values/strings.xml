@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">FinalProject</string>
     <string name="top_score">Top 100 Scores</string>
+    <string name="previous_score_title">Previous Score:</string>
     <string name="user_score_title">Your Score:</string>
     <string name="user_score">NULL</string>
     <string name="upload_score">Upload Score</string>

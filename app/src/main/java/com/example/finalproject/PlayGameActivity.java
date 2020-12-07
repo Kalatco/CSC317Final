@@ -1,6 +1,7 @@
 package com.example.finalproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,15 +33,11 @@ public class PlayGameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // to make fullscreen, works without this
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         Point point = new Point(); // used to hold the dimensions of the screen
         getWindowManager().getDefaultDisplay().getSize(point);
 
         // initialize gameView object
         gameView = new GameView(this, point.x, point.y);
-
 
         // Check for game over in gameView object
         new AsyncCheckGameOver().execute();
@@ -73,11 +70,14 @@ public class PlayGameActivity extends AppCompatActivity {
                 }
             }
 
-            System.out.println("Game Over! now do something from PlayGameActivity");
-            System.out.println("User score is: " + gameView.getGameOverScore());
+            return Integer.toString(gameView.getGameOverScore());
+        }
 
-            return null;
+        protected void onPostExecute(String finalScore) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("score", finalScore);
+            setResult(RESULT_OK, returnIntent);
+            finish();
         }
     }
-
 }

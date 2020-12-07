@@ -31,7 +31,7 @@ public class MainMenuFragment extends Fragment {
             public void onClick(View v) {
                 // start PlayGameActivity
                 Intent intent = new Intent(getActivity(), PlayGameActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 

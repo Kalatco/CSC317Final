@@ -43,9 +43,19 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/previous_score"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/previous_score_title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
                 android:gravity="center"
                 android:text="@string/user_score_title"
                 android:textSize="24sp"
@@ -55,7 +65,7 @@
                 android:id="@+id/user_score"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:gravity="center"
                 android:text="@string/user_score"
                 android:textSize="72sp" />
@@ -63,7 +73,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:orientation="horizontal">
 
                 <TextView
@@ -86,7 +96,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:orientation="horizontal">
 
                 <Button
